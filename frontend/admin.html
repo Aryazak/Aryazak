@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="design.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <nav class="nav">
+            <button onclick="showSection('patients')" class="btn">View Patients</button>
+            <button onclick="showSection('appointments')" class="btn">View Appointments</button>
+            <button onclick="showSection('addDoctor')" class="btn">Add Doctor</button>
+            <button onclick="showSection('deleteDoctor')" class="btn">Delete Doctor</button>
+        </nav>
+
+        <div id="patients" class="section">
+            <h2>Users (Patients)</h2>
+            <ul id="patientsList" class="list"></ul>
+        </div>
+
+        <div id="appointments" class="section hidden">
+            <h2>Appointments</h2>
+            <ul id="appointmentsList" class="list"></ul>
+        </div>
+
+        <div id="addDoctor" class="section hidden">
+            <h2>Add Doctor</h2>
+            <form id="addDoctorForm" class="form">
+                <label for="doctorName">Doctor Name</label>
+                <input type="text" id="doctorName" name="name" required>
+                <label for="specialization">Specialization</label>
+                <input type="text" id="specialization" name="specialization" required>
+                <button type="submit" class="btn">Add Doctor</button>
+            </form>
+        </div>
+
+        <div id="deleteDoctor" class="section hidden">
+            <h2>Delete Doctor</h2>
+            <div id="doctorList"></div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections and only display the selected section
+            document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Fetch and display patients
+        async function fetchPatients() {
+            try {
+                const response = await fetch('/admin/users');
+                const users = await response.json();
+                const patientsList = document.getElementById('patientsList');
+                patientsList.innerHTML = '';
+
+                users.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${user.fullname} (${user.email})`;
+                    patientsList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        }
+
+        // Fetch and display appointments
+        async function fetchAppointments() {
+            try {
+                const response = await fetch('/admin/appointments');
+                const appointments = await response.json();
+                const appointmentsList = document.getElementById('appointmentsList');
+                appointmentsList.innerHTML = '';
+
+                appointments.forEach(appointment => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <div>
+                            <p>Email: ${appointment.email}, Doctor: ${appointment.doctorName}, Date: ${appointment.date}</p>
+                            <p>Status: ${appointment.status || 'Pending'}</p>
+                            <button onclick="checkoutAppointment('${appointment._id}')" class="btn">Check Out</button>
+                        </div>
+                    `;
+                    appointmentsList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching appointments:', error);
+            }
+        }
+
+        // Check out an appointment
+        async function checkoutAppointment(appointmentId) {
+            try {
+                const response = await fetch(`/admin/appointments/checkout/${appointmentId}`, { method: 'POST' });
+                const result = await response.json();
+                alert(result.message);
+                fetchAppointments(); // Refresh appointments
+            } catch (error) {
+                console.error('Error checking out appointment:', error);
+            }
+        }
+
+        // Fetch and display doctors
+        async function fetchDoctors() {
+            try {
+                const response = await fetch('/admin/doctors');
+                const doctors = await response.json();
+                const doctorList = document.getElementById('doctorList');
+                doctorList.innerHTML = '';
+
+                doctors.forEach(doctor => {
+                    const doctorItem = document.createElement('div');
+                    doctorItem.classList.add('doctor-item');
+                    doctorItem.innerHTML = `
+                        <p><strong>Name:</strong> ${doctor.name}</p>
+                        <p><strong>Specialization:</strong> ${doctor.specialization}</p>
+                        <button onclick="deleteDoctor('${doctor._id}')" class="btn">Delete</button>
+                    `;
+                    doctorList.appendChild(doctorItem);
+                });
+            } catch (error) {
+                console.error('Error fetching doctors:', error);
+            }
+        }
+
+        // Delete a doctor
+        async function deleteDoctor(doctorId) {
+            try {
+                const response = await fetch(`/admin/doctors/${doctorId}`, { method: 'DELETE' });
+                const result = await response.json();
+                alert(result.message);
+                fetchDoctors(); // Refresh doctor list
+            } catch (error) {
+                console.error('Error deleting doctor:', error);
+            }
+        }
+
+        // Add a doctor
+        document.getElementById('addDoctorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('doctorName').value;
+            const specialization = document.getElementById('specialization').value;
+
+            try {
+                const response = await fetch('/admin/add-doctor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, specialization })
+                });
+                const result = await response.json();
+                alert(result.message);
+                fetchDoctors(); // Refresh doctor list
+            } catch (error) {
+                console.error('Error adding doctor:', error);
+            }
+        });
+
+        // Initial data fetch
+        fetchPatients();
+        fetchAppointments();
+        fetchDoctors();
+    </script>
+</body>
+</html>

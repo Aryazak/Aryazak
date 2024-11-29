@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="frontend.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Patient Dashboard</h1>
+        <nav class="nav">
+            <button onclick="showSection('home')">Home</button>
+            <button onclick="showSection('about')">About</button>
+            <button onclick="window.location.href='book.html';">Book Appointment</button>
+            <form action="/auth/logout" method="POST" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </nav>
+    </div>
+
+    <!-- Main Content Section -->
+    <div class="container">
+        <main>
+            <section id="home">
+                <h2>What is Telemedicine?</h2>
+                <p>Telemedicine is a modern approach to healthcare, allowing patients to receive medical care remotely. Through video calls, phone consultations, or messaging, patients can connect with healthcare professionals without the need for an in-person visit. This service helps reduce wait times, increases accessibility, and provides convenience for individuals unable to attend traditional appointments due to distance or time constraints.</p>
+            </section>
+
+            <section id="about" class="hidden">
+                <h2>About Our Telemedicine Services</h2>
+                <p>Our telemedicine platform offers a wide range of healthcare services designed to improve patient convenience and accessibility. We provide virtual consultations with licensed doctors, enabling you to address health concerns from the comfort of your home. Additional services include prescription refills, remote patient monitoring, specialist referrals, and mental health support, all accessible through secure video calls or chat.</p>
+                
+                <h3>How It Works</h3>
+                <ul>
+                    <li>Register for an account on our platform.</li>
+                    <li>Choose the healthcare service you need.</li>
+                    <li>Schedule an appointment with a qualified doctor.</li>
+                    <li>Attend your consultation through video or phone.</li>
+                    <li>Receive your prescription or follow-up care instructions.</li>
+                </ul>
+            </section>
+        
+            <button onclick="window.location.href='book.html';" class="btn">Book Appointment</button>
+        </main>
+
+        <aside class="sidebar">
+            <h2>Sidebar</h2>
+            <p><strong>Terms & Conditions</strong></p>
+            <p>By using our services, you agree to the terms and conditions outlined here. These terms govern your use of the site and our services, including any content, functionality, and features offered on or through the site.</p>
+        
+            <p><strong>Privacy Policy</strong></p>
+            <p>Your privacy is important to us. We collect and use personal information to improve the services we offer. Please refer to our privacy policy for more details on how we handle your data.</p>
+        
+            <p><strong>Contact Us</strong></p>
+            <p>If you have any questions, concerns, or feedback, feel free to reach out to us at <strong>support@telemedicine.com</strong>.</p>
+        </aside>
+    </div>
+    
+    <!-- Footer Section -->
+    <footer>
+        <p>Made with ❤️ for a better healthcare experience.</p>
+        <p>&copy; 2024 Telemedicine Application. All Rights Reserved. | Follow us on
+        <a href="#">Facebook</a>, <a href="#">Twitter</a>, <a href="#">LinkedIn</a>.
+        </p>
+        <p>Contact us: contact@telemedicine.com</p>
+    </footer>
+
+    <script>
+        // Function to toggle sections
+        function showSection(sectionId) {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('about').style.display = 'none';
+            document.getElementById(sectionId).style.display = 'block';
+        }
+    </script>
+</body>
+</html>
